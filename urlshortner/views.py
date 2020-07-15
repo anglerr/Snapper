@@ -8,6 +8,7 @@ from urlshortner.models import UrlShortnerModel
 from urlshortner.utils import verify_request, BadRequestException
 from urlshortner.serializer import UrlShortRequest, UrlShortResponse, UrlLongRequest
 from urlshortner.constants import *
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
@@ -79,3 +80,14 @@ def redirect_short_url(request, short_url):
     except Exception as e:
         print(str(e))
         return Response(dict({"error": "Ah oh! Something very bad has happened!"}), status=500)
+
+
+def delete_expired_links():
+    """
+    Periodically delete all existing links from the db
+    This will be triggered using cron job
+    """
+    try:
+        print(UrlShortnerModel.objects.filter(expiry_date__lt=timezone.now()).delete())
+    except Exception as e:
+        print(str(e))
