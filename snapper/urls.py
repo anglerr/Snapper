@@ -16,11 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from urlshortner.views import shorten_url, retrieve_url, redirect_short_url
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
     path('api/shorten_url/', shorten_url),
     path('api/get_original_url/', retrieve_url),
     path('<str:short_url>/', redirect_short_url),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

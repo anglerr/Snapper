@@ -9,6 +9,7 @@ from urlshortner.utils import verify_request, BadRequestException
 from urlshortner.serializer import UrlShortRequest, UrlShortResponse, UrlLongRequest
 from urlshortner.constants import *
 from django.utils import timezone
+from django.shortcuts import render
 
 logger = logging.getLogger(__name__)
 
@@ -76,7 +77,8 @@ def redirect_short_url(request, short_url):
         us = UrlShortnerModel.objects.get(short_url=short_url)
         return redirect(us.actual_url)
     except UrlShortnerModel.DoesNotExist:
-        return Response(dict({"error": "Short url doesn't exist or have expired!"}), status=400)
+        return render(request, "error404.html")
+        # return Response(dict({"error": "Short url doesn't exist or have expired!"}), status=400)
     except Exception as e:
         print(str(e))
         return Response(dict({"error": "Ah oh! Something very bad has happened!"}), status=500)
